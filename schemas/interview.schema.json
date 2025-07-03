@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/TranscriptionResult",
+  "definitions": {
+    "TranscriptionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Segment"
+          }
+        },
+        "num_speakers": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "language",
+        "num_speakers",
+        "segments"
+      ],
+      "title": "TranscriptionResult"
+    },
+    "Segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "start": {
+          "type": "number"
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Word"
+          }
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "avg_logprob": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "avg_logprob",
+        "duration",
+        "end",
+        "speaker",
+        "start",
+        "text",
+        "words"
+      ],
+      "title": "Segment"
+    },
+    "Word": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "type": "number"
+        },
+        "word": {
+          "type": "string"
+        },
+        "start": {
+          "type": "number"
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "end",
+        "probability",
+        "speaker",
+        "start",
+        "word"
+      ],
+      "title": "Word"
+    }
+  }
+}
