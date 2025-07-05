@@ -19,20 +19,24 @@ The project aims to identify effective interview techniques, common deception pa
 
 ```
 PredCatchAnalysis/
-├── data/
-│   ├── interviews/         # Interview data in JSON format
-│   ├── metadata/           # Interview context information
-│   └── statistics/         # Aggregated statistical data
-├── analysis/
-│   ├── behavioral/         # Subject behavior analysis
-│   ├── techniques/         # Interviewer technique assessment
-│   └── patterns/           # Cross-interview pattern recognition
 ├── scripts/
-│   ├── processing/         # Data processing utilities
-│   └── visualization/      # Data visualization tools
-└── docs/
-    ├── methodology/        # Analysis methodology documentation
-    └── findings/           # Research findings and reports
+│   ├── processing/
+│   └── visualization/
+├── events/
+│   └── [catcher]_[iso-date]_[city-state]/
+│       ├── analysis/
+│       │   ├── admissions.md
+│       │   ├── behavioral.md
+│       │   ├── deception.md
+│       │   ├── linguistic.md
+│       │   ├── summary.md
+│       │   ├── techniques.md
+│       │   └── timeline.md
+│       └── raw/
+│           ├── interview.json
+│           └── metadata.json
+└── schemas/
+    └── interview.schema.json
 ```
 
 ## Interview Data Format
