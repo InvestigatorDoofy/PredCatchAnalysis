@@ -1,0 +1,1632 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Interviewer Technique Assessment Schema",
+  "description": "Structured framework for analyzing interviewer techniques and behaviors in investigative interviews",
+  "type": "object",
+  "definitions": {
+    "timestamp": {
+      "type": "integer",
+      "description": "Point in time during interview (seconds from start)"
+    },
+    "effectivenessRating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating scale (1=ineffective, 5=highly effective)"
+    },
+    "severityRating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating scale (1=minimal, 5=extreme)"
+    },
+    "basicExample": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "statement": {
+          "type": "string",
+          "description": "Exact wording used"
+        },
+        "effectiveness": {
+          "$ref": "#/definitions/effectivenessRating"
+        }
+      }
+    },
+    "techniqueExample": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "technique": {
+          "type": "string",
+          "description": "Specific approach or method used"
+        },
+        "statement": {
+          "type": "string",
+          "description": "Exact wording used"
+        },
+        "effectiveness": {
+          "$ref": "#/definitions/effectivenessRating"
+        }
+      }
+    },
+    "questionExample": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "question": {
+          "type": "string",
+          "description": "Exact wording of the question"
+        },
+        "effectiveness": {
+          "$ref": "#/definitions/effectivenessRating"
+        }
+      }
+    },
+    "techniqueObservation": {
+      "type": "object",
+      "properties": {
+        "observed": {
+          "type": "boolean",
+          "description": "Whether technique was used"
+        },
+        "frequency": {
+          "type": "integer",
+          "description": "Number of occurrences"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/basicExample"
+          }
+        }
+      }
+    },
+    "rapportTechniques": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "small_talk",
+          "common_ground",
+          "empathy_display",
+          "active_listening",
+          "self_disclosure",
+          "humor",
+          "none",
+          "other"
+        ],
+        "description": "Approaches used to build relationship"
+      }
+    },
+    "listeningTechniques": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reflective_statements",
+          "paraphrasing",
+          "summarizing",
+          "clarifying_questions",
+          "emotional_validation",
+          "none",
+          "other"
+        ],
+        "description": "Methods used to demonstrate attention and understanding"
+      }
+    },
+    "questionType": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Total number of this question type"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/questionExample"
+          }
+        }
+      }
+    },
+    "cognitiveBiasTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "anchoring",
+          "framing",
+          "loss_aversion",
+          "confirmation_bias",
+          "authority_bias",
+          "none",
+          "other"
+        ],
+        "description": "Mental shortcuts exploited during interview"
+      }
+    },
+    "emotionalLeverTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "guilt_induction",
+          "fear_arousal",
+          "shame_induction",
+          "hope_building",
+          "pride_appeal",
+          "none",
+          "other"
+        ],
+        "description": "Emotions targeted during interview"
+      }
+    },
+    "socialPressureTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "social_comparison",
+          "normalization",
+          "authority_appeal",
+          "consensus_claims",
+          "none",
+          "other"
+        ],
+        "description": "Social influence mechanisms employed"
+      }
+    }
+  },
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the interview and analysis for identification and contextual understanding",
+      "properties": {
+        "interviewId": {
+          "type": "string",
+          "description": "Unique identifier for the interview to enable cross-referencing and database tracking"
+        },
+        "analysisDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when analysis was performed to track analytical timeline and version control"
+        },
+        "interviewDuration": {
+          "type": "integer",
+          "description": "Duration in seconds of the complete interview to assess pacing and technique distribution"
+        },
+        "interviewContext": {
+          "type": "string",
+          "enum": [
+            "law_enforcement",
+            "civilian_organization",
+            "journalistic",
+            "academic",
+            "clinical",
+            "mixed",
+            "other"
+          ],
+          "description": "Primary organizational context in which the interview was conducted to assess applicable standards and protocols"
+        },
+        "interviewSetting": {
+          "type": "string",
+          "description": "Physical location and environment where interview took place to evaluate environmental influences"
+        },
+        "recordingType": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "audio",
+              "video",
+              "transcript",
+              "notes",
+              "other"
+            ]
+          },
+          "description": "Methods used to document the interview to assess data completeness and reliability"
+        }
+      },
+      "required": [
+        "interviewId",
+        "analysisDate",
+        "interviewDuration",
+        "interviewContext"
+      ]
+    },
+    "interviewerProfile": {
+      "type": "object",
+      "description": "Information about the interviewer's identity presentation and authority claims",
+      "properties": {
+        "identificationMethod": {
+          "type": "object",
+          "description": "How the interviewer identified themselves to the subject, affecting perceived authority and rapport",
+          "properties": {
+            "selfIdentified": {
+              "type": "boolean",
+              "description": "Whether interviewer explicitly stated their name/role to establish transparency"
+            },
+            "identificationTimestamp": {
+              "$ref": "#/definitions/timestamp"
+            },
+            "identificationStatement": {
+              "type": "string",
+              "description": "Exact wording used for self-identification to evaluate clarity and potential deception"
+            },
+            "organizationDisclosed": {
+              "type": "boolean",
+              "description": "Whether interviewer revealed their organizational affiliation for transparency assessment"
+            },
+            "roleDisclosed": {
+              "type": "boolean",
+              "description": "Whether interviewer explained their professional function to establish expectations"
+            },
+            "identificationAccuracy": {
+              "type": "string",
+              "enum": [
+                "accurate",
+                "partially_accurate",
+                "misleading",
+                "false",
+                "ambiguous"
+              ],
+              "description": "Degree to which self-identification reflected actual identity/role to assess honesty"
+            },
+            "identificationEvolution": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "What was said during identity evolution to document exact wording"
+                  },
+                  "implication": {
+                    "type": "string",
+                    "description": "What this statement suggested about interviewer's identity/authority to assess impact"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "authorityPresentation": {
+          "type": "object",
+          "description": "How interviewer established and projected authority during the interview",
+          "properties": {
+            "claimedAuthority": {
+              "type": "boolean",
+              "description": "Whether interviewer explicitly or implicitly claimed power/authority to assess influence tactics"
+            },
+            "authorityType": {
+              "type": "string",
+              "enum": [
+                "law_enforcement",
+                "government",
+                "organizational",
+                "expert",
+                "moral",
+                "none",
+                "other"
+              ],
+              "description": "Category of authority projected to evaluate basis of influence"
+            },
+            "explicitAuthorityClaims": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording of authority claim to assess directness and impact"
+                  },
+                  "impliedPower": {
+                    "type": "string",
+                    "description": "What abilities/powers this claim suggested interviewer possessed to evaluate intimidation potential"
+                  }
+                }
+              }
+            },
+            "authoritySymbols": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "uniform",
+                  "badge",
+                  "credentials",
+                  "organizational_attire",
+                  "specialized_vocabulary",
+                  "none",
+                  "other"
+                ],
+                "description": "Visual or behavioral cues that reinforced authority perception"
+              }
+            }
+          }
+        },
+        "demographicFactors": {
+          "type": "object",
+          "description": "Observable demographic characteristics of interviewer that may influence dynamics",
+          "properties": {
+            "apparentGender": {
+              "type": "string",
+              "description": "Perceived gender of interviewer to assess potential gender dynamics"
+            },
+            "apparentAgeRange": {
+              "type": "string",
+              "description": "Estimated age range of interviewer to evaluate age-related dynamics"
+            },
+            "relevantDemographicFactors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Other demographic characteristics that may influence interview dynamics"
+            }
+          }
+        }
+      }
+    },
+    "interviewApproach": {
+      "type": "object",
+      "description": "Overall strategy and theoretical framework guiding the interview",
+      "properties": {
+        "overallStrategy": {
+          "type": "string",
+          "enum": [
+            "accusatorial",
+            "information_gathering",
+            "cognitive",
+            "kinesic",
+            "hybrid",
+            "unstructured",
+            "other"
+          ],
+          "description": "Primary interview approach used to categorize the fundamental methodology"
+        },
+        "theoreticalFramework": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "reid_technique",
+              "peace_model",
+              "cognitive_interview",
+              "kinesic_interview",
+              "motivational_interviewing",
+              "conversation_management",
+              "other"
+            ],
+            "description": "Recognized interview methodologies influencing technique selection"
+          }
+        },
+        "phaseStructure": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "phaseId": {
+                "type": "integer",
+                "description": "Sequential identifier for interview phase to track progression"
+              },
+              "phaseLabel": {
+                "type": "string",
+                "description": "Descriptive name for the interview phase based on its purpose"
+              },
+              "startTimestamp": {
+                "$ref": "#/definitions/timestamp"
+              },
+              "endTimestamp": {
+                "$ref": "#/definitions/timestamp"
+              },
+              "primaryObjective": {
+                "type": "string",
+                "description": "Main goal interviewer appeared to pursue during this phase"
+              },
+              "questioningDensity": {
+                "type": "number",
+                "description": "Questions per minute to assess interrogative pressure"
+              },
+              "dominantTechniques": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Primary methods employed during this phase to identify technique clustering"
+              }
+            }
+          }
+        },
+        "phasePatterning": {
+          "type": "object",
+          "description": "Analysis of how interview phases were structured and sequenced",
+          "properties": {
+            "identifiablePattern": {
+              "type": "boolean",
+              "description": "Whether a recognizable structure exists in phase progression to assess planning"
+            },
+            "patternDescription": {
+              "type": "string",
+              "description": "Explanation of the observed phase pattern to characterize strategy"
+            },
+            "cyclicalNature": {
+              "type": "boolean",
+              "description": "Whether interview returned to previous phases to assess adaptability"
+            },
+            "adaptationToResistance": {
+              "type": "boolean",
+              "description": "Whether phasing changed in response to subject resistance to evaluate responsiveness"
+            }
+          }
+        }
+      }
+    },
+    "questioningTechniques": {
+      "type": "object",
+      "description": "Analysis of specific question types and patterns used by interviewer",
+      "properties": {
+        "questionTypes": {
+          "type": "object",
+          "description": "Categorization and assessment of different question formats employed",
+          "properties": {
+            "openEnded": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/questionType"
+                },
+                {
+                  "description": "Questions designed to elicit narrative responses without suggesting answers"
+                }
+              ]
+            },
+            "closed": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/questionType"
+                },
+                {
+                  "description": "Questions requiring specific, limited responses (often yes/no)"
+                }
+              ]
+            },
+            "leading": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of leading questions to assess potential bias"
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "question": {
+                        "type": "string",
+                        "description": "Exact wording of the question to assess formulation"
+                      },
+                      "leadingNature": {
+                        "type": "string",
+                        "description": "How the question directs toward a particular answer to evaluate suggestiveness"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Questions that suggest or imply a desired answer"
+            },
+            "alternative": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of alternative questions to assess technique prevalence"
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "question": {
+                        "type": "string",
+                        "description": "Exact wording of the question to assess formulation"
+                      },
+                      "options": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The choices presented within the alternative question to assess framing"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Questions presenting multiple options while presupposing an admission"
+            },
+            "probing": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of probing questions to assess depth of inquiry"
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "question": {
+                        "type": "string",
+                        "description": "Exact wording of the question to assess formulation"
+                      },
+                      "targetedDetail": {
+                        "type": "string",
+                        "description": "Specific information being sought through probing to assess focus"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Follow-up questions seeking elaboration on previous responses"
+            }
+          }
+        },
+        "questionSequencing": {
+          "type": "object",
+          "description": "Patterns in how questions were ordered and structured",
+          "properties": {
+            "funnelApproach": {
+              "type": "boolean",
+              "description": "Whether questioning progressed from general to specific to assess strategic narrowing"
+            },
+            "circularQuestioning": {
+              "type": "boolean",
+              "description": "Whether same topics were revisited multiple times to assess consistency checking"
+            },
+            "themeDevelopment": {
+              "type": "boolean",
+              "description": "Whether questions built upon previous responses to develop narratives to assess integration"
+            },
+            "sequencingPattern": {
+              "type": "string",
+              "description": "Description of the overall question sequencing strategy observed"
+            }
+          }
+        },
+        "questionReformulation": {
+          "type": "object",
+          "description": "Analysis of how questions were rephrased or reframed",
+          "properties": {
+            "frequency": {
+              "type": "integer",
+              "description": "Number of times interviewer reformulated questions to assess persistence"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "originalQuestion": {
+                    "type": "string",
+                    "description": "Initial formulation of the question to compare with reformulation"
+                  },
+                  "reformulatedQuestion": {
+                    "type": "string",
+                    "description": "How the question was rephrased to assess modification strategy"
+                  },
+                  "reasonForReformulation": {
+                    "type": "string",
+                    "description": "Apparent purpose for changing the question to understand intent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "persuasionTechniques": {
+      "type": "object",
+      "description": "Methods used to influence subject's willingness to provide information",
+      "properties": {
+        "minimization": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used to minimize to assess approach"
+                      },
+                      "minimizationStrategy": {
+                        "type": "string",
+                        "description": "How seriousness was downplayed to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Techniques that downplay the seriousness of actions or consequences"
+            }
+          ]
+        },
+        "maximization": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used to maximize to assess approach"
+                      },
+                      "maximizationStrategy": {
+                        "type": "string",
+                        "description": "How seriousness was emphasized to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Techniques that emphasize seriousness or negative consequences"
+            }
+          ]
+        },
+        "moralAppeals": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used in moral appeal to assess approach"
+                      },
+                      "appealType": {
+                        "type": "string",
+                        "description": "What moral principle was invoked to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Appeals to ethics, conscience, or value systems"
+            }
+          ]
+        },
+        "identityAppeals": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used in identity appeal to assess approach"
+                      },
+                      "identityInvoked": {
+                        "type": "string",
+                        "description": "What aspect of identity was referenced to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Appeals to subject's self-image, roles, or identities"
+            }
+          ]
+        },
+        "rationalization": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used to rationalize to assess approach"
+                      },
+                      "rationalizationOffered": {
+                        "type": "string",
+                        "description": "What justification was provided to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Offering justifications or explanations for subject's actions"
+            }
+          ]
+        },
+        "impliedConsequences": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used to imply consequences to assess approach"
+                      },
+                      "impliedOutcome": {
+                        "type": "string",
+                        "description": "What consequence was suggested to characterize technique"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Suggestions of outcomes without explicit statements"
+            }
+          ]
+        }
+      }
+    },
+    "evidencePresentationStrategies": {
+      "type": "object",
+      "description": "How information and evidence were revealed or referenced during interview",
+      "properties": {
+        "evidenceWithholding": {
+          "type": "object",
+          "description": "Strategic delay in revealing known information",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether evidence was intentionally withheld to establish presence of strategy"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "Seconds evidence was withheld to assess strategic patience"
+            },
+            "effectOnSubjectBehavior": {
+              "type": "string",
+              "description": "How withholding affected subject's statements to evaluate impact"
+            }
+          }
+        },
+        "evidenceImplication": {
+          "type": "object",
+          "description": "Suggesting possession of evidence without direct presentation",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether evidence was implied rather than shown to establish presence of strategy"
+            },
+            "frequency": {
+              "type": "integer",
+              "description": "Number of evidence implications to assess reliance on technique"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording used to imply evidence to assess approach"
+                  },
+                  "implicationStrength": {
+                    "type": "string",
+                    "enum": [
+                      "vague",
+                      "moderate",
+                      "strong"
+                    ],
+                    "description": "How strongly evidence possession was implied to evaluate directness"
+                  },
+                  "subjectResponse": {
+                    "type": "string",
+                    "description": "How subject reacted to the implication to assess effectiveness"
+                  },
+                  "effectiveness": {
+                    "$ref": "#/definitions/effectivenessRating"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "directEvidencePresentation": {
+          "type": "object",
+          "description": "Explicit sharing or description of evidence to subject",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether evidence was directly presented to establish presence of strategy"
+            },
+            "frequency": {
+              "type": "integer",
+              "description": "Number of direct evidence presentations to assess reliance on technique"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "evidenceType": {
+                    "type": "string",
+                    "description": "Nature of evidence presented to categorize presentation"
+                  },
+                  "presentationMethod": {
+                    "type": "string",
+                    "description": "How evidence was revealed to assess delivery technique"
+                  },
+                  "subjectResponse": {
+                    "type": "string",
+                    "description": "How subject reacted to the presentation to assess effectiveness"
+                  },
+                  "effectiveness": {
+                    "$ref": "#/definitions/effectivenessRating"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "strategicEvidence": {
+          "type": "object",
+          "description": "Overall pattern of evidence use throughout interview",
+          "properties": {
+            "evidenceSequencing": {
+              "type": "string",
+              "description": "Order in which evidence was presented to assess strategic planning"
+            },
+            "strengthProgression": {
+              "type": "string",
+              "description": "Whether evidence was presented from weak to strong or vice versa to assess strategy"
+            },
+            "timedReleaseStrategy": {
+              "type": "boolean",
+              "description": "Whether evidence release followed a deliberate timing pattern to assess planning"
+            }
+          }
+        }
+      }
+    },
+    "rapportStrategies": {
+      "type": "object",
+      "description": "Techniques used to build and maintain relationship with subject",
+      "properties": {
+        "initialRapportEfforts": {
+          "type": "object",
+          "description": "Techniques used early in interview to establish connection",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether initial rapport building was attempted to establish presence"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "Seconds spent on initial rapport to assess prioritization"
+            },
+            "techniques": {
+              "$ref": "#/definitions/rapportTechniques"
+            },
+            "effectiveness": {
+              "$ref": "#/definitions/effectivenessRating"
+            }
+          }
+        },
+        "ongoingRapportMaintenance": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/techniqueObservation"
+            },
+            {
+              "properties": {
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "$ref": "#/definitions/timestamp"
+                      },
+                      "technique": {
+                        "type": "string",
+                        "description": "Method used to maintain rapport to categorize approach"
+                      },
+                      "statement": {
+                        "type": "string",
+                        "description": "Exact wording used for rapport maintenance to assess approach"
+                      },
+                      "effectiveness": {
+                        "$ref": "#/definitions/effectivenessRating"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Techniques used throughout interview to sustain relationship"
+            }
+          ]
+        },
+        "selfDisclosure": {
+          "type": "object",
+          "description": "Interviewer sharing personal information to build connection",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether interviewer self-disclosure occurred to establish presence"
+            },
+            "frequency": {
+              "type": "integer",
+              "description": "Number of self-disclosures to assess reliance on technique"
+            },
+            "disclosureTypes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "personal_experience",
+                  "opinion",
+                  "emotional_reaction",
+                  "similarity_claim",
+                  "none",
+                  "other"
+                ],
+                "description": "Types of information interviewer revealed about themselves"
+              }
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "disclosure": {
+                    "type": "string",
+                    "description": "What personal information was shared to assess nature"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "description": "Apparent reason for disclosure to evaluate strategic intent"
+                  },
+                  "effectiveness": {
+                    "$ref": "#/definitions/effectivenessRating"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "activeListening": {
+          "type": "object",
+          "description": "Demonstrating attention and understanding of subject's statements",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether active listening techniques were used to establish presence"
+            },
+            "frequency": {
+              "type": "integer",
+              "description": "Number of active listening demonstrations to assess consistency"
+            },
+            "techniques": {
+              "$ref": "#/definitions/listeningTechniques"
+            }
+          }
+        }
+      }
+    },
+    "linguisticStrategies": {
+      "type": "object",
+      "description": "Analysis of language use and adaptation by interviewer",
+      "properties": {
+        "registerAdaptation": {
+          "type": "object",
+          "description": "Changes in formality or style of language to match subject",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether register adaptation occurred to establish presence"
+            },
+            "adaptationPattern": {
+              "type": "string",
+              "description": "How language style changed over time to characterize evolution"
+            },
+            "matchingSubjectLanguage": {
+              "type": "boolean",
+              "description": "Whether interviewer mirrored subject's language to assess convergence"
+            },
+            "registerShifts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "shift": {
+                    "type": "string",
+                    "description": "How language register changed to document adaptation"
+                  },
+                  "apparentPurpose": {
+                    "type": "string",
+                    "description": "Why register appears to have shifted to assess intent"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "lexicalChoices": {
+          "type": "object",
+          "description": "Specific word selection patterns and strategies",
+          "properties": {
+            "technicalVocabulary": {
+              "type": "boolean",
+              "description": "Whether specialized terminology was used to assess expertise projection"
+            },
+            "euphemisms": {
+              "type": "boolean",
+              "description": "Whether indirect language was used for sensitive topics to assess softening"
+            },
+            "labelingBehavior": {
+              "type": "boolean",
+              "description": "Whether interviewer applied characterizing terms to subject's actions to assess framing"
+            },
+            "significantTerms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": "string",
+                    "description": "Specific word used with strategic significance"
+                  },
+                  "frequency": {
+                    "type": "integer",
+                    "description": "How often term was used to assess emphasis"
+                  },
+                  "apparentPurpose": {
+                    "type": "string",
+                    "description": "Why term appears to have been chosen to evaluate intent"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pronoun": {
+          "type": "object",
+          "description": "Strategic use of personal pronouns to influence relationship",
+          "properties": {
+            "firstPersonPlural": {
+              "type": "boolean",
+              "description": "Use of 'we' to create alliance or shared perspective"
+            },
+            "secondPersonEmphasis": {
+              "type": "boolean",
+              "description": "Frequent use of 'you' for direct attribution or focus"
+            },
+            "depersonalization": {
+              "type": "boolean",
+              "description": "Use of third-person references for psychological distancing"
+            },
+            "significantPatterns": {
+              "type": "string",
+              "description": "Notable patterns in pronoun usage to document strategy"
+            }
+          }
+        },
+        "sentenceStructure": {
+          "type": "object",
+          "description": "Patterns in grammatical construction of statements",
+          "properties": {
+            "dominantStructure": {
+              "type": "string",
+              "enum": [
+                "simple",
+                "compound",
+                "complex",
+                "variable",
+                "other"
+              ],
+              "description": "Most common sentence construction to assess communication style"
+            },
+            "directness": {
+              "type": "string",
+              "enum": [
+                "very_direct",
+                "moderately_direct",
+                "indirect",
+                "variable"
+              ],
+              "description": "Degree of straightforwardness in communication to assess approach"
+            },
+            "significantPatterns": {
+              "type": "string",
+              "description": "Notable patterns in sentence construction to document strategy"
+            }
+          }
+        }
+      }
+    },
+    "psychologicalManipulation": {
+      "type": "object",
+      "description": "Techniques that leverage cognitive or emotional vulnerabilities",
+      "properties": {
+        "cognitiveBiasExploitation": {
+          "type": "object",
+          "description": "Using known mental shortcuts or biases to influence responses",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether cognitive bias exploitation occurred to establish presence"
+            },
+            "techniques": {
+              "$ref": "#/definitions/cognitiveBiasTypes"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/techniqueExample"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "emotionalManipulation": {
+          "type": "object",
+          "description": "Deliberately arousing or leveraging emotions to influence responses",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether emotional manipulation occurred to establish presence"
+            },
+            "techniques": {
+              "$ref": "#/definitions/emotionalLeverTypes"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "technique": {
+                    "type": "string",
+                    "description": "What emotional lever was used to categorize approach"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording used to manipulate emotion to assess approach"
+                  },
+                  "targetEmotion": {
+                    "type": "string",
+                    "description": "What feeling was intended to be aroused to evaluate intent"
+                  },
+                  "effectiveness": {
+                    "$ref": "#/definitions/effectivenessRating"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "socialPressure": {
+          "type": "object",
+          "description": "Using group norms or external expectations to influence compliance",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether social pressure techniques were used to establish presence"
+            },
+            "techniques": {
+              "$ref": "#/definitions/socialPressureTypes"
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/techniqueExample"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "legalConsiderations": {
+      "type": "object",
+      "description": "Elements affecting admissibility and ethical compliance of interview",
+      "properties": {
+        "rightsCommunication": {
+          "type": "object",
+          "description": "How legal rights were conveyed to subject if applicable",
+          "properties": {
+            "observed": {
+              "type": "boolean",
+              "description": "Whether any rights were communicated to establish presence"
+            },
+            "timestamp": {
+              "$ref": "#/definitions/timestamp"
+            },
+            "clarity": {
+              "type": "string",
+              "enum": [
+                "clear",
+                "ambiguous",
+                "implied",
+                "absent"
+              ],
+              "description": "How understandably rights were explained to assess adequacy"
+            },
+            "comprehensionCheck": {
+              "type": "boolean",
+              "description": "Whether understanding of rights was verified to assess thoroughness"
+            }
+          }
+        },
+        "voluntarinessProtections": {
+          "type": "object",
+          "description": "Elements affecting freedom of choice in participation",
+          "properties": {
+            "freedomToLeaveIndicated": {
+              "type": "boolean",
+              "description": "Whether subject was informed they could terminate interview to assess coercion"
+            },
+            "coercionIndicators": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording of potentially coercive statement to assess nature"
+                  },
+                  "coercionType": {
+                    "type": "string",
+                    "description": "What form of pressure was applied to categorize concern"
+                  },
+                  "severity": {
+                    "$ref": "#/definitions/severityRating"
+                  }
+                }
+              }
+            },
+            "deceptivePractices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording of deceptive statement to assess nature"
+                  },
+                  "deceptionType": {
+                    "type": "string",
+                    "description": "What form of deception was used to categorize concern"
+                  },
+                  "severity": {
+                    "$ref": "#/definitions/severityRating"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "promisesThreats": {
+          "type": "object",
+          "description": "Statements suggesting outcomes contingent on cooperation",
+          "properties": {
+            "explicitPromises": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording of promise to assess nature"
+                  },
+                  "promiseType": {
+                    "type": "string",
+                    "description": "What benefit was offered to categorize inducement"
+                  },
+                  "legalConcern": {
+                    "type": "string",
+                    "description": "Potential admissibility issue created by promise"
+                  }
+                }
+              }
+            },
+            "impliedPromises": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording suggesting benefit to assess nature"
+                  },
+                  "implication": {
+                    "type": "string",
+                    "description": "What benefit was suggested to categorize inducement"
+                  },
+                  "legalConcern": {
+                    "type": "string",
+                    "description": "Potential admissibility issue created by implication"
+                  }
+                }
+              }
+            },
+            "explicitThreats": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording of threat to assess nature"
+                  },
+                  "threatType": {
+                    "type": "string",
+                    "description": "What consequence was threatened to categorize pressure"
+                  },
+                  "legalConcern": {
+                    "type": "string",
+                    "description": "Potential admissibility issue created by threat"
+                  }
+                }
+              }
+            },
+            "impliedThreats": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "$ref": "#/definitions/timestamp"
+                  },
+                  "statement": {
+                    "type": "string",
+                    "description": "Exact wording suggesting consequence to assess nature"
+                  },
+                  "implication": {
+                    "type": "string",
+                    "description": "What consequence was suggested to categorize pressure"
+                  },
+                  "legalConcern": {
+                    "type": "string",
+                    "description": "Potential admissibility issue created by implication"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "effectivenessAssessment": {
+      "type": "object",
+      "description": "Evaluation of technique impact and overall interviewer success",
+      "properties": {
+        "overallEffectiveness": {
+          "$ref": "#/definitions/effectivenessRating"
+        },
+        "pivotalMoments": {
+          "type": "array",
+          "description": "Critical turning points that significantly impacted interview outcome",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "$ref": "#/definitions/timestamp"
+              },
+              "technique": {
+                "type": "string",
+                "description": "What approach created the breakthrough to identify successful methods"
+              },
+              "impact": {
+                "type": "string",
+                "description": "How this moment changed interview trajectory to assess significance"
+              },
+              "effectivenessRating": {
+                "$ref": "#/definitions/effectivenessRating"
+              }
+            }
+          }
+        },
+        "techniquesRanking": {
+          "type": "array",
+          "description": "Comparative evaluation of technique effectiveness",
+          "items": {
+            "type": "object",
+            "properties": {
+              "technique": {
+                "type": "string",
+                "description": "Specific interviewer approach to be evaluated"
+              },
+              "effectivenessRating": {
+                "$ref": "#/definitions/effectivenessRating"
+              },
+              "keyInsight": {
+                "type": "string",
+                "description": "Critical observation about this technique's application to document learning"
+              }
+            }
+          }
+        },
+        "adaptabilityAssessment": {
+          "type": "object",
+          "description": "Evaluation of interviewer's responsiveness to subject",
+          "properties": {
+            "recognizedResistance": {
+              "type": "boolean",
+              "description": "Whether interviewer identified and acknowledged subject resistance to assess awareness"
+            },
+            "adaptedTechniques": {
+              "type": "boolean",
+              "description": "Whether interviewer changed approaches in response to resistance to assess flexibility"
+            },
+            "timeliness": {
+              "type": "string",
+              "enum": [
+                "prompt",
+                "delayed",
+                "excessive",
+                "absent"
+              ],
+              "description": "How quickly interviewer adjusted to changing conditions to assess responsiveness"
+            },
+            "appropriateness": {
+              "type": "string",
+              "enum": [
+                "appropriate",
+                "moderately_appropriate",
+                "inappropriate"
+              ],
+              "description": "Whether technique adaptations were well-suited to circumstances to assess judgment"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "meta",
+    "interviewerProfile",
+    "interviewApproach",
+    "questioningTechniques",
+    "effectivenessAssessment"
+  ]
+}

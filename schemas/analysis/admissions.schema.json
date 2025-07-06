@@ -1,0 +1,956 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Admission Analysis Schema",
+  "description": "Structured framework for analyzing admissions and incriminating statements in investigative interviews",
+  "type": "object",
+  "definitions": {
+    "timestamp": {
+      "type": "integer",
+      "description": "Point in time during interview (seconds from start)"
+    },
+    "ratingScale": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1-5 rating scale (1=low, 5=high)"
+    },
+    "statementReference": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "statement": {
+          "type": "string",
+          "description": "Exact verbatim quote from transcript"
+        },
+        "speakerId": {
+          "type": "string",
+          "description": "Identifier of the speaker (subject, interviewer, etc.)"
+        }
+      },
+      "required": [
+        "timestamp",
+        "statement"
+      ]
+    },
+    "precedingExchange": {
+      "type": "array",
+      "description": "Sequence of statements immediately preceding the admission",
+      "items": {
+        "$ref": "#/definitions/statementReference"
+      },
+      "minItems": 1
+    },
+    "techniqueReference": {
+      "type": "object",
+      "properties": {
+        "techniqueType": {
+          "type": "string",
+          "enum": [
+            "evidence_confrontation",
+            "alternative_question",
+            "minimization",
+            "maximization",
+            "moral_appeal",
+            "identity_appeal",
+            "rationalization",
+            "emotional_leverage",
+            "non_judgmental_framing",
+            "theme_development",
+            "direct_accusation",
+            "silent_pause",
+            "cognitive_load_inducement",
+            "other"
+          ],
+          "description": "Category of interviewer technique used"
+        },
+        "specificTechnique": {
+          "type": "string",
+          "description": "Specific implementation or variant of the technique"
+        },
+        "statementReference": {
+          "$ref": "#/definitions/statementReference"
+        }
+      }
+    }
+  },
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the admission analysis and its relationship to the interview",
+      "properties": {
+        "admissionId": {
+          "type": "string",
+          "description": "Unique identifier for this specific admission"
+        },
+        "interviewId": {
+          "type": "string",
+          "description": "Reference to the interview where admission occurred for cross-analysis"
+        },
+        "analysisDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when admission analysis was performed"
+        },
+        "admissionTimestamp": {
+          "$ref": "#/definitions/timestamp"
+        },
+        "analyzerIdentifier": {
+          "type": "string",
+          "description": "Person or system that performed the analysis"
+        }
+      },
+      "required": [
+        "admissionId",
+        "interviewId",
+        "admissionTimestamp"
+      ]
+    },
+    "admissionCore": {
+      "type": "object",
+      "description": "Essential properties of the admission itself",
+      "properties": {
+        "admissionStatement": {
+          "type": "string",
+          "description": "Exact verbatim quote of the admission statement"
+        },
+        "admissionType": {
+          "type": "string",
+          "enum": [
+            "direct_admission",
+            "partial_admission",
+            "implicit_admission",
+            "qualified_admission",
+            "conditional_admission",
+            "hypothetical_admission"
+          ],
+          "description": "Classification of how explicitly incriminating the statement is"
+        },
+        "admissionSubject": {
+          "type": "string",
+          "description": "Topic or allegation being admitted to"
+        },
+        "elementAdmitted": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knowledge",
+              "intent",
+              "motive",
+              "action",
+              "identity",
+              "causation",
+              "timeline",
+              "location",
+              "methodology",
+              "other"
+            ],
+            "description": "What factual or legal element is being admitted"
+          },
+          "description": "Categories of what is being admitted"
+        },
+        "admissionStrength": {
+          "$ref": "#/definitions/ratingScale",
+          "description": "Rating of how clearly and definitively the statement constitutes an admission (1=weak/ambiguous, 5=strong/unequivocal)"
+        },
+        "admissionCompleteness": {
+          "$ref": "#/definitions/ratingScale",
+          "description": "Rating of how fully the statement admits to the relevant allegation or issue (1=minimal/narrow, 5=comprehensive)"
+        }
+      },
+      "required": [
+        "admissionStatement",
+        "admissionType",
+        "elementAdmitted"
+      ]
+    },
+    "contextualFactors": {
+      "type": "object",
+      "description": "Circumstances and conditions surrounding the admission",
+      "properties": {
+        "interviewPhase": {
+          "type": "string",
+          "description": "Stage of interview when admission occurred (e.g., 'rapport building', 'confrontation')"
+        },
+        "timingInInterview": {
+          "type": "object",
+          "properties": {
+            "secondsFromStart": {
+              "$ref": "#/definitions/timestamp"
+            },
+            "percentageComplete": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "How far into the interview this admission occurred as percentage"
+            },
+            "temporalContext": {
+              "type": "string",
+              "description": "Relevant contextual information about timing (e.g., 'after extended questioning', 'immediately after evidence presentation')"
+            }
+          }
+        },
+        "precedingExchange": {
+          "$ref": "#/definitions/precedingExchange"
+        },
+        "triggeringTechniques": {
+          "type": "array",
+          "description": "Interviewer techniques that directly preceded and appeared to elicit the admission",
+          "items": {
+            "$ref": "#/definitions/techniqueReference"
+          }
+        },
+        "environmentalFactors": {
+          "type": "object",
+          "description": "Physical and environmental conditions potentially affecting the admission",
+          "properties": {
+            "interviewSetting": {
+              "type": "string",
+              "description": "Description of the location where admission occurred"
+            },
+            "physicalConditions": {
+              "type": "string",
+              "description": "Relevant environmental factors (temperature, comfort, privacy, etc.)"
+            },
+            "subjectPhysicalState": {
+              "type": "string",
+              "description": "Observable physical condition of subject (fatigue, hunger, discomfort, etc.)"
+            },
+            "presentPersons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "People present during the admission"
+            }
+          }
+        },
+        "psychologicalContext": {
+          "type": "object",
+          "description": "Apparent psychological state and pressures at time of admission",
+          "properties": {
+            "observableEmotionalState": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "calm",
+                  "anxious",
+                  "angry",
+                  "sad",
+                  "relieved",
+                  "ashamed",
+                  "confused",
+                  "defensive",
+                  "resigned",
+                  "guarded",
+                  "other"
+                ]
+              },
+              "description": "Subject's apparent emotional condition during admission"
+            },
+            "perceivedPressureLevel": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of apparent psychological pressure subject was experiencing (1=minimal, 5=extreme)"
+            },
+            "resistanceBeforeAdmission": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how strongly subject resisted admitting before statement (1=minimal, 5=extreme)"
+            }
+          }
+        }
+      }
+    },
+    "linguisticAnalysis": {
+      "type": "object",
+      "description": "Analysis of language features in the admission",
+      "properties": {
+        "statementStructure": {
+          "type": "string",
+          "enum": [
+            "simple",
+            "compound",
+            "complex",
+            "fragmented",
+            "incomplete",
+            "run_on",
+            "other"
+          ],
+          "description": "Grammatical structure of admission statement"
+        },
+        "wordCount": {
+          "type": "integer",
+          "description": "Number of words in admission statement"
+        },
+        "linguisticFeatures": {
+          "type": "object",
+          "properties": {
+            "hedgingLanguage": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Qualification words used (e.g., 'maybe', 'probably', 'might')"
+            },
+            "minimizingLanguage": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Words that downplay significance (e.g., 'just', 'only', 'a little')"
+            },
+            "distancingLanguage": {
+              "type": "boolean",
+              "description": "Whether subject used psychological distancing in statement"
+            },
+            "passiveVoice": {
+              "type": "boolean",
+              "description": "Whether subject used passive voice to describe actions"
+            },
+            "pronounUsage": {
+              "type": "string",
+              "description": "How subject referred to self in admission (first-person, third-person, etc.)"
+            }
+          }
+        },
+        "deceptionIndicators": {
+          "type": "object",
+          "properties": {
+            "presentIndicators": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "tense_shifts",
+                  "unnecessary_qualifiers",
+                  "lack_of_personal_pronouns",
+                  "over_explanation",
+                  "lack_of_sensory_details",
+                  "inconsistent_details",
+                  "spontaneous_corrections",
+                  "none",
+                  "other"
+                ]
+              },
+              "description": "Linguistic markers associated with deception within the admission"
+            },
+            "indicatorExamples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "indicatorType": {
+                    "type": "string",
+                    "description": "Type of deception indicator"
+                  },
+                  "textExample": {
+                    "type": "string",
+                    "description": "Excerpt from statement showing this indicator"
+                  }
+                }
+              }
+            },
+            "deceptionLikelihood": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how likely the admission contains deceptive elements (1=unlikely, 5=highly likely)"
+            }
+          }
+        },
+        "deliveryFeatures": {
+          "type": "object",
+          "description": "How the statement was delivered (if audio/video available)",
+          "properties": {
+            "responseLatency": {
+              "type": "number",
+              "description": "Seconds between question and beginning of admission response"
+            },
+            "speechRate": {
+              "type": "string",
+              "enum": [
+                "very_slow",
+                "slow",
+                "moderate",
+                "fast",
+                "very_fast",
+                "variable"
+              ],
+              "description": "Pace of speech during admission"
+            },
+            "disfluencies": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "um",
+                  "uh",
+                  "er",
+                  "hmm",
+                  "like",
+                  "you_know",
+                  "stuttering",
+                  "false_starts",
+                  "self_interruptions",
+                  "other"
+                ]
+              },
+              "description": "Speech disruptions during admission"
+            },
+            "toneShifts": {
+              "type": "boolean",
+              "description": "Whether voice tone changed notably during admission"
+            }
+          }
+        }
+      }
+    },
+    "behavioralIndicators": {
+      "type": "object",
+      "description": "Physical and nonverbal behaviors during admission (if video available)",
+      "properties": {
+        "facialExpressions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Notable facial expressions during admission"
+        },
+        "eyeContact": {
+          "type": "string",
+          "enum": [
+            "maintained",
+            "avoidant",
+            "excessive",
+            "variable",
+            "none"
+          ],
+          "description": "Pattern of eye contact during admission"
+        },
+        "bodyLanguage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Significant body movements or postures during admission"
+        },
+        "physiologicalIndicators": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "visible_sweating",
+              "flushing",
+              "pallor",
+              "trembling",
+              "rapid_breathing",
+              "swallowing",
+              "dry_mouth",
+              "none",
+              "other"
+            ]
+          },
+          "description": "Observable physical signs of stress or emotional response"
+        },
+        "behavioralNotes": {
+          "type": "string",
+          "description": "Additional observations about nonverbal behavior"
+        }
+      }
+    },
+    "admissionProgressionAnalysis": {
+      "type": "object",
+      "description": "Analysis of how the admission developed over time",
+      "properties": {
+        "admissionSequence": {
+          "type": "string",
+          "enum": [
+            "spontaneous",
+            "elicited",
+            "coerced",
+            "negotiated",
+            "incremental",
+            "sudden",
+            "other"
+          ],
+          "description": "How the admission emerged within the interview context"
+        },
+        "priorResistancePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "denial",
+              "minimization",
+              "justification",
+              "deflection",
+              "silence",
+              "counter_accusation",
+              "memory_failure_claims",
+              "hypothetical_discussion",
+              "none",
+              "other"
+            ]
+          },
+          "description": "Resistance strategies used before the admission"
+        },
+        "resistanceBreakdownTrigger": {
+          "type": "object",
+          "properties": {
+            "primaryTrigger": {
+              "type": "string",
+              "enum": [
+                "evidence_presentation",
+                "logical_inconsistency",
+                "rapport_based_appeal",
+                "moral_appeal",
+                "alternative_positioning",
+                "minimization",
+                "identity_appeal",
+                "other"
+              ],
+              "description": "Main factor that appeared to overcome resistance"
+            },
+            "triggerDescription": {
+              "type": "string",
+              "description": "Details about how resistance was overcome"
+            },
+            "triggerTimestamp": {
+              "$ref": "#/definitions/timestamp"
+            }
+          }
+        },
+        "subsequentClarifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clarificationStatement": {
+                "$ref": "#/definitions/statementReference"
+              },
+              "clarificationType": {
+                "type": "string",
+                "enum": [
+                  "expansion",
+                  "qualification",
+                  "justification",
+                  "partial_retraction",
+                  "contextualization",
+                  "other"
+                ],
+                "description": "How the clarification relates to the original admission"
+              },
+              "clarificationImpact": {
+                "type": "string",
+                "enum": [
+                  "strengthens",
+                  "weakens",
+                  "neutral",
+                  "contradicts",
+                  "other"
+                ],
+                "description": "Effect of clarification on admission strength"
+              }
+            }
+          },
+          "description": "Follow-up statements that modify or explain the admission"
+        },
+        "relatedAdmissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "relatedAdmissionId": {
+                "type": "string",
+                "description": "Identifier for another admission in the same interview"
+              },
+              "relationshipType": {
+                "type": "string",
+                "enum": [
+                  "prerequisite",
+                  "consequence",
+                  "contradiction",
+                  "expansion",
+                  "parallel",
+                  "other"
+                ],
+                "description": "How this admission relates to the current one"
+              },
+              "relationshipDescription": {
+                "type": "string",
+                "description": "Explanation of how admissions are connected"
+              }
+            }
+          },
+          "description": "Connections to other admissions in the same interview"
+        }
+      }
+    },
+    "legalEvidentiary": {
+      "type": "object",
+      "description": "Legal and evidentiary assessment of the admission",
+      "properties": {
+        "elementsCriteria": {
+          "type": "object",
+          "properties": {
+            "relevantOffense": {
+              "type": "string",
+              "description": "Criminal offense or allegation to which admission relates"
+            },
+            "elementsSatisfied": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "element": {
+                    "type": "string",
+                    "description": "Specific legal element addressed"
+                  },
+                  "satisfactionLevel": {
+                    "$ref": "#/definitions/ratingScale",
+                    "description": "Rating of how strongly admission satisfies this element (1=minimal, 5=compelling)"
+                  }
+                }
+              },
+              "description": "Legal elements potentially established by the admission"
+            }
+          }
+        },
+        "voluntarinessAssessment": {
+          "type": "object",
+          "properties": {
+            "voluntarinessRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how voluntary the admission appears (1=highly questionable, 5=clearly voluntary)"
+            },
+            "voluntarinessIssues": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "explicit_coercion",
+                  "implicit_coercion",
+                  "promises_of_benefit",
+                  "threats_of_harm",
+                  "deception",
+                  "psychological_pressure",
+                  "physical_discomfort",
+                  "impairment",
+                  "rights_violation",
+                  "none",
+                  "other"
+                ]
+              },
+              "description": "Factors potentially affecting voluntariness"
+            },
+            "contextualConsiderations": {
+              "type": "string",
+              "description": "Additional context relevant to voluntariness assessment"
+            }
+          }
+        },
+        "reliabilityAssessment": {
+          "type": "object",
+          "properties": {
+            "reliabilityRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how reliable the admission appears to be (1=highly questionable, 5=highly reliable)"
+            },
+            "reliabilityIssues": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "suggestive_questioning",
+                  "factual_contamination",
+                  "leading_information",
+                  "memory_limitations",
+                  "psychological_vulnerability",
+                  "undue_pressure",
+                  "false_motivation",
+                  "none",
+                  "other"
+                ]
+              },
+              "description": "Factors potentially affecting reliability"
+            },
+            "consistencyWithEvidence": {
+              "type": "string",
+              "enum": [
+                "consistent",
+                "partially_consistent",
+                "inconsistent",
+                "uncorroborated",
+                "contradicted",
+                "unknown"
+              ],
+              "description": "How admission aligns with other known evidence"
+            },
+            "corroboratingElements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Other evidence that supports the admission"
+            },
+            "contradictingElements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Evidence that contradicts the admission"
+            }
+          }
+        },
+        "admissibilityAssessment": {
+          "type": "object",
+          "properties": {
+            "admissibilityRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how likely admission would be admissible in court (1=likely inadmissible, 5=likely admissible)"
+            },
+            "admissibilityIssues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "issueType": {
+                    "type": "string",
+                    "enum": [
+                      "miranda_violation",
+                      "involuntariness",
+                      "coercion",
+                      "deception",
+                      "right_to_counsel",
+                      "procedural_error",
+                      "fruit_of_poisonous_tree",
+                      "none",
+                      "other"
+                    ],
+                    "description": "Type of potential admissibility problem"
+                  },
+                  "issueDescription": {
+                    "type": "string",
+                    "description": "Specific details about the admissibility concern"
+                  },
+                  "issueSeverity": {
+                    "$ref": "#/definitions/ratingScale",
+                    "description": "Rating of issue's impact on admissibility (1=minimal, 5=fatal)"
+                  }
+                }
+              },
+              "description": "Legal concerns that could affect admissibility"
+            },
+            "custodyStatus": {
+              "type": "string",
+              "enum": [
+                "clearly_custodial",
+                "arguably_custodial",
+                "non_custodial",
+                "undetermined"
+              ],
+              "description": "Assessment of whether subject was in custody at time of admission"
+            },
+            "mirandaStatus": {
+              "type": "string",
+              "enum": [
+                "properly_administered",
+                "improperly_administered",
+                "not_administered_needed",
+                "not_administered_not_needed",
+                "unclear",
+                "not_applicable"
+              ],
+              "description": "Status of Miranda warnings if applicable"
+            }
+          }
+        },
+        "probativeValue": {
+          "type": "object",
+          "properties": {
+            "overallProbativeRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of overall evidentiary value (1=minimal, 5=exceptional)"
+            },
+            "keyStrengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Most significant aspects enhancing evidentiary value"
+            },
+            "keyWeaknesses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Most significant aspects diminishing evidentiary value"
+            },
+            "prosecutorialUtility": {
+              "type": "string",
+              "description": "Assessment of how useful admission would be in prosecution"
+            }
+          }
+        }
+      }
+    },
+    "psychologicalDynamics": {
+      "type": "object",
+      "description": "Analysis of psychological factors affecting the admission",
+      "properties": {
+        "apparentMotivation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "guilt_relief",
+              "fear_reduction",
+              "rapport_response",
+              "logical_trap",
+              "evidence_response",
+              "plea_negotiation",
+              "fatigue",
+              "self_protection",
+              "other_protection",
+              "unknown",
+              "other"
+            ]
+          },
+          "description": "Apparent psychological motivation for making admission"
+        },
+        "cognitiveFactors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "cognitive_load",
+              "confirmation_bias",
+              "anchoring",
+              "suggestibility",
+              "memory_reconstruction",
+              "confabulation",
+              "none",
+              "other"
+            ]
+          },
+          "description": "Cognitive processes potentially influencing admission"
+        },
+        "vulnerabilityFactors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vulnerabilityType": {
+                "type": "string",
+                "enum": [
+                  "youth",
+                  "cognitive_limitation",
+                  "mental_illness",
+                  "substance_influence",
+                  "sleep_deprivation",
+                  "emotional_distress",
+                  "authority_susceptibility",
+                  "cultural_factors",
+                  "language_barrier",
+                  "none",
+                  "other"
+                ],
+                "description": "Category of psychological vulnerability"
+              },
+              "evidenceOfVulnerability": {
+                "type": "string",
+                "description": "Indicators that this vulnerability was present"
+              },
+              "potentialImpact": {
+                "type": "string",
+                "description": "How this vulnerability may have affected the admission"
+              }
+            }
+          },
+          "description": "Subject characteristics that may affect reliability or voluntariness"
+        },
+        "subjectAwareness": {
+          "type": "object",
+          "properties": {
+            "awarenessOfIncrimination": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of subject's apparent awareness of statement's incriminating nature (1=unaware, 5=fully aware)"
+            },
+            "intentionalityRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how intentional/deliberate the admission appears (1=unintentional, 5=clearly deliberate)"
+            },
+            "strategicConsiderations": {
+              "type": "string",
+              "description": "Assessment of whether admission appears to be part of subject's strategy"
+            }
+          }
+        }
+      }
+    },
+    "analysisConclusions": {
+      "type": "object",
+      "description": "Summary assessments and recommendations regarding the admission",
+      "properties": {
+        "overallAssessment": {
+          "type": "string",
+          "description": "Comprehensive evaluation of the admission and its significance"
+        },
+        "truthfulnessAssessment": {
+          "type": "object",
+          "properties": {
+            "truthfulnessRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of how truthful the admission appears to be (1=likely false, 5=likely truthful)"
+            },
+            "confidenceInAssessment": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of analyst's confidence in truthfulness assessment (1=low confidence, 5=high confidence)"
+            },
+            "basisForAssessment": {
+              "type": "string",
+              "description": "Factors supporting truthfulness evaluation"
+            }
+          }
+        },
+        "investigativeValue": {
+          "type": "object",
+          "properties": {
+            "investigativeUtilityRating": {
+              "$ref": "#/definitions/ratingScale",
+              "description": "Rating of admission's usefulness to investigation (1=minimal, 5=critical)"
+            },
+            "followUpPriorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Areas requiring additional investigation based on admission"
+            },
+            "inconsistenciesRequiringResolution": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Contradictions or ambiguities that need clarification"
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific recommendations for handling this admission"
+        }
+      }
+    }
+  },
+  "required": [
+    "meta",
+    "admissionCore",
+    "contextualFactors",
+    "legalEvidentiary",
+    "analysisConclusions"
+  ]
+}
